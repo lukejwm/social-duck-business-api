@@ -34,6 +34,10 @@ class Feedback(Base):
     star_rating = Column(Integer)
     review_type = Column(Enum("Positive", "Negative"))
     alert_seen = Column(Boolean, default=False)
+    
+    @property
+    def feedback_id(self):
+        return self.id
 
 class ChatHistory(Base):
     __tablename__ = "chat_history"
