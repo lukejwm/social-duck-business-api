@@ -11,6 +11,7 @@ class BusinessUser(Base):
     address = Column(String(255), nullable=False)
     town_city = Column(String(100), nullable=False)
     type = Column(String(50), nullable=False)
+    hashed_password = Column(String(255), nullable=True)  # Initially nullable for existing records
 
     chats = relationship("ChatHistory", back_populates="business")
 

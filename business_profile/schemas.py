@@ -6,6 +6,7 @@ class BusinessInfo(BaseModel):
     address: str
     town_city: str
     type: str
+    password: str = ""  # Optional for backward compatibility
 
 class BusinessUserResponse(BaseModel):
     id: int
@@ -64,6 +65,19 @@ class BusinessAlert(BaseModel):
     title: str
     body: str
     star_rating: int
+    
+    class Config:
+        orm_mode = True
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class LoginResponse(BaseModel):
+    id: int
+    email: str
+    business_name: str
+    token: str = ""
     
     class Config:
         orm_mode = True

@@ -9,7 +9,16 @@ router = APIRouter(prefix="/business", tags=["Business"])
 
 @router.post("/register", response_model=schemas.BusinessUserResponse)
 def register_business_user(user: schemas.BusinessInfo, db: Session = Depends(get_db)):
-    db_user = models.BusinessUser(**user.dict())
+    from .auth import hash_password
+    
+    existing_user = db.query(models.BusinessUser).filter(models.BusinessUser.email == user.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    user_data = user.dict()
+    password = user_data.pop("password", "")  # Remove password from user data
+    
+    db_user = models.BusinessUser(**user_data, hashed_password=hash_password(password) if password else "")
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -124,3 +133,29 @@ def get_business_alerts(business_id: int, db: Session = Depends(get_db)):
     
     db.commit()
     return alerts
+
+@router.post("/login", response_model=schemas.LoginResponse)
+def login_business_user(login_data: schemas.LoginRequest, db: Session = Depends(get_db)):
+    """
+    Login for business users
+    """
+    from .auth import verify_password, create_access_token
+    
+    db_user = db.query(models.BusinessUser).filter(models.BusinessUser.email == login_data.email).first()
+    
+    if not db_user or not verify_password(login_data.password, db_user.hashed_password):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+    
+    token = create_access_token(
+        data={"sub": db_user.email, "id": db_user.id}
+    )
+    
+    return {
+        "id": db_user.id,
+        "email": db_user.email,
+        "business_name": db_user.business_name,
+        "token": token
+    }
