@@ -35,7 +35,7 @@ def test_business_alerts(client, test_db):
     test_db.add(feedback)
     test_db.commit()
     
-    response = client.get(f"/feedback/alert/{business_id}")
+    response = client.get(f"/business/feedback/alert/{business_id}")
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 1
@@ -44,6 +44,6 @@ def test_business_alerts(client, test_db):
     assert data[0]["title"] == "Bad Experience"
     assert data[0]["star_rating"] == 1
     
-    response = client.get(f"/feedback/alert/{business_id}")
+    response = client.get(f"/business/feedback/alert/{business_id}")
     assert response.status_code == 200
     assert len(response.json()) == 0  # No more unseen alerts

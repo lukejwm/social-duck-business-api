@@ -21,7 +21,7 @@ def test_start_chat(client, test_db):
     test_db.commit()
     
     response = client.post(
-        "/chat/start",
+        "/business/chat/start",
         json={
             "business_email": "chat@business.com",
             "user_email": "chat@user.com",
@@ -40,7 +40,7 @@ def test_send_message(client, test_db):
     session_id = test_start_chat(client, test_db)
     
     response = client.post(
-        "/chat/send",
+        "/business/chat/send",
         json={
             "session_id": session_id,
             "message": "Thank you for reaching out. How can I help?",
@@ -56,7 +56,7 @@ def test_get_chat_history(client, test_db):
     session_id = test_start_chat(client, test_db)
     
     client.post(
-        "/chat/send",
+        "/business/chat/send",
         json={
             "session_id": session_id,
             "message": "Thank you for reaching out. How can I help?",
@@ -65,7 +65,7 @@ def test_get_chat_history(client, test_db):
         }
     )
     
-    response = client.get(f"/chat/{session_id}")
+    response = client.get(f"/business/chat/{session_id}")
     assert response.status_code == 200
     data = response.json()
     assert len(data) >= 2  # At least 2 messages (initial + response)

@@ -33,7 +33,7 @@ def test_get_business_user(client):
     )
     business_id = register_response.json()["id"]
     
-    response = client.get(f"/business/{business_id}")
+    response = client.get(f"/business/account/{business_id}")
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == business_id
@@ -54,9 +54,9 @@ def test_delete_business_user(client):
     )
     business_id = register_response.json()["id"]
     
-    response = client.delete(f"/business/{business_id}")
+    response = client.delete(f"/business/delete/{business_id}")
     assert response.status_code == 200
-    assert response.json() == {"message": "Business user deleted"}
+    assert response.json() == {"message": "Business user deleted successfully"}
     
-    get_response = client.get(f"/business/{business_id}")
+    get_response = client.get(f"/business/account/{business_id}")
     assert get_response.status_code == 404
