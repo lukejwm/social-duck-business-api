@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Enum, DateTime
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Enum, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from database import Base
@@ -33,6 +33,7 @@ class Feedback(Base):
     body = Column(Text)
     star_rating = Column(Integer)
     review_type = Column(Enum("Positive", "Negative"))
+    alert_seen = Column(Boolean, default=False)
 
 class ChatHistory(Base):
     __tablename__ = "chat_history"

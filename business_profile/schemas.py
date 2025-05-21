@@ -57,3 +57,13 @@ class UserSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+class BusinessAlert(BaseModel):
+    feedback_id: int
+    username: str
+    title: str
+    body: str
+    star_rating: int
+    
+    class Config:
+        orm_mode = True
