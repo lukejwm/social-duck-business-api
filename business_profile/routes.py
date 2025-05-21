@@ -107,3 +107,20 @@ def get_chat_history(session_id: str, db: Session = Depends(get_db)):
     if not history:
         raise HTTPException(status_code=404, detail="Chat session not found")
     return history
+
+@router.get("/feedback/alert/{business_id}", response_model=list[schemas.BusinessAlert])
+def get_business_alerts(business_id: int, db: Session = Depends(get_db)):
+    """
+    Get alerts for negative reviews that the business has not yet seen
+    """
+    alerts = db.query(models.Feedback).filter(
+        models.Feedback.business_id == business_id,
+        models.Feedback.review_type == "Negative",
+        models.Feedback.alert_seen == False
+    ).all()
+    
+    for alert in alerts:
+        alert.alert_seen = True
+    
+    db.commit()
+    return alerts
